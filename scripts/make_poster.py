@@ -23,6 +23,9 @@ from shapely.ops import linemerge, substring, unary_union
 from shapely.prepared import prep
 
 DATA, ROUTE, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+# "poster" (default) renders the full poster; "base" renders only the painted map
+# (no route, labels, header, panel or pictures) for the GPS page to draw over.
+MODE = sys.argv[4] if len(sys.argv) > 4 else "poster"
 HERE = Path(__file__).resolve().parent
 rng = random.Random(1828)
 
@@ -579,5 +582,13 @@ body{margin:0;background:#EDE6CF}
 .poster .ft{font:700 21px "Alegreya Sans",sans-serif;fill:#fff}
 .poster .fs{font:italic 400 15px "Alegreya Sans",sans-serif;fill:#EAF4F7}
 """
-Path(OUT).write_text(f"<title>Lower Riviera Staircase Walk</title><style>{''.join(font_css)}{css}</style>{svg}")
+# Pieces the GPS page reuses: label paths and the vector layer above the paint.
+overlay_defs = "".join(defs[1:])
+overlay = "".join(top)
+if MODE == "base":
+    base_svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" class="poster">'
+                f'<defs>{defs[0]}</defs>' + "".join(base) + paper + "</svg>")
+    Path(OUT).write_text(f"<style>body{{margin:0}}.poster{{display:block;width:100%;height:auto}}</style>{base_svg}")
+else:
+    Path(OUT).write_text(f"<title>Lower Riviera Staircase Walk</title><style>{''.join(font_css)}{css}</style>{svg}")
 print(f"wrote {OUT}: {len(svg)/1024:.0f} KB svg, {len(tree_marks)} canopy marks, {len(buildings)} buildings")

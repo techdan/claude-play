@@ -1,4 +1,5 @@
-import { chromium } from 'playwright';
+// PLAYWRIGHT_MODULE lets a global install be used, e.g. $(npm root -g)/playwright/index.mjs
+const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const [,, src, out, width] = process.argv;
 const b = await chromium.launch();
 const p = await b.newPage({ viewport: { width: +width, height: 900 }, deviceScaleFactor: 2 });

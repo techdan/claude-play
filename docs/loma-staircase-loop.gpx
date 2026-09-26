@@ -2,11 +2,11 @@
 <gpx version="1.1" creator="claude-play make_walk.py" xmlns="http://www.topografix.com/GPX/1/1">
 <metadata><name>Loma Staircase Loop</name><desc>1.63 mi loop from 1828 Loma St, Santa Barbara. Map data (c) OpenStreetMap contributors, Overture Maps.</desc></metadata>
 <wpt lat="34.4374428" lon="-119.7063860"><name>1. 1828 Loma St</name></wpt>
-<wpt lat="34.4368000" lon="-119.7067100"><name>2. Loma–Pedregosa stairs</name></wpt>
-<wpt lat="34.4379100" lon="-119.7074100"><name>3. Sierra Street stairs</name></wpt>
-<wpt lat="34.4385800" lon="-119.7058400"><name>4. Riviera stairway</name></wpt>
-<wpt lat="34.4393400" lon="-119.7053300"><name>5. Riviera Park gardens</name></wpt>
-<wpt lat="34.4389200" lon="-119.7043500"><name>6. Belmond El Encanto loop</name></wpt>
+<wpt lat="34.4368000" lon="-119.7067100"><name>2. Loma–Pedregosa Stairs</name></wpt>
+<wpt lat="34.4379100" lon="-119.7074100"><name>3. Sierra St Stairs</name></wpt>
+<wpt lat="34.4385800" lon="-119.7058400"><name>4. Riviera Stairway</name></wpt>
+<wpt lat="34.4393400" lon="-119.7053300"><name>5. Riviera Park Gardens</name></wpt>
+<wpt lat="34.4389200" lon="-119.7043500"><name>6. Belmond El Encanto Loop</name></wpt>
 <wpt lat="34.4379500" lon="-119.7054000"><name>7. Orpet Park</name></wpt>
 <trk><name>Loma Staircase Loop</name><trkseg>
 <trkpt lat="34.4374428" lon="-119.7063860"/>
