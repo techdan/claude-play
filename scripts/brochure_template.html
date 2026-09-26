@@ -41,6 +41,10 @@ ${FONTS}
   .spread { display: grid; gap: 28px; grid-template-columns: minmax(0, 1fr); }
   @media (min-width: 1040px) { .spread { grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr); align-items: start; } }
 
+  figure.poster { margin: 0; display: grid; gap: 8px; }
+  figure.poster img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); box-shadow: 0 6px 24px rgba(58,42,24,.18); }
+  figure.poster figcaption { font-size: 13px; color: var(--ink-2); }
+  .sect { font: 700 26px/1.1 var(--display); margin: 8px 0 -12px; }
   figure.mapwrap { margin: 0; background: var(--paper-2); border: 1px solid var(--rule); padding: 10px; }
   .map { display: block; width: 100%; height: auto; }
   .map .st { font: italic 500 10.5px var(--body); fill: #6C6255; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; letter-spacing: .02em; }
@@ -94,6 +98,13 @@ ${FONTS}
       <li><b>1828 Loma St</b><span>start &amp; finish</span></li>
     </ul>
   </header>
+
+  <figure class="poster">
+    <img src="lower-riviera-staircase-walk.jpg" width="1800" height="1900" alt="Illustrated poster of the Lower Riviera Staircase Walk: a blue route with numbered stops over a painted map of the Riviera streets, with the Santa Ynez Mountains along the top and an itinerary panel on the right.">
+    <figcaption>Illustrated poster. The streets, paths, stairs, buildings, parks and route are drawn from map data at true scale, north up. The trees, roof colours, mountains and pictures are decoration.</figcaption>
+  </figure>
+
+  <h2 class="sect">Detail map and stops</h2>
 
   <section class="spread">
     <figure class="mapwrap">
