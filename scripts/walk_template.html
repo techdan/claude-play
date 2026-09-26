@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2E2A26">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Loma Staircase Loop</title>
+<style>
+${FONTS}
+:root {
+  --paper: #EFEBE1; --paper-2: #F7F4EC; --ink: #2E2A26; --ink-2: #5E554B; --rule: #D3C9B8;
+  --bloom: #B7245C; --dot: #1A73E8;
+  --display: "Alegreya SC", Palatino, Georgia, serif;
+  --body: "Alegreya Sans", "Gill Sans", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 16px/1.4 var(--body); overflow: hidden;
+       -webkit-tap-highlight-color: transparent; }
+.app { position: fixed; inset: 0; display: grid; grid-template-rows: auto 1fr auto; }
+
+header { display: flex; align-items: center; gap: 10px; background: var(--ink); color: #fff;
+         padding: calc(env(safe-area-inset-top, 0px) + 8px) 12px 8px; }
+header h1 { font: 800 17px/1.1 var(--display); margin: 0; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+header .sub { display: block; font: 400 12px/1.2 var(--body); opacity: .75; letter-spacing: .04em; }
+button { font: 700 14px/1 var(--body); border: 0; border-radius: 999px; padding: 10px 14px; cursor: pointer; }
+button:focus-visible { outline: 3px solid #9CC7FF; outline-offset: 2px; }
+.gps { background: var(--dot); color: #fff; display: inline-flex; align-items: center; gap: 7px; }
+.gps[aria-pressed="true"] { background: #fff; color: var(--dot); }
+.ghost { background: rgba(255,255,255,.14); color: #fff; }
+
+.stage { position: relative; overflow: hidden; touch-action: none; background: var(--paper); }
+.stage svg.map { position: absolute; inset: 0; width: 100%; height: 100%; display: block; user-select: none; -webkit-user-select: none; }
+.map .st { font: italic 500 10.5px var(--body); fill: #6C6255; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+.map .st.on { font-style: normal; font-weight: 700; fill: var(--ink); stroke: var(--paper); stroke-width: 3.4px; letter-spacing: .05em; text-transform: uppercase; font-size: 9.6px; }
+.map .area { font: 700 15px var(--display); fill: var(--ink); paint-order: stroke; stroke: rgba(255,255,255,.75); stroke-width: 4px; }
+.map .area.park { fill: #3F5B2C; } .map .area.hotel { fill: #7A5316; }
+.map .area.small { font: italic 500 10.5px var(--body); fill: var(--ink-2); }
+.map .pin circle { fill: var(--ink); stroke: #fff; stroke-width: 2.4px; }
+.map .pin text { font: 800 14px var(--display); fill: #fff; }
+.map .offmap text { font: 700 11px var(--body); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 3px; }
+.map .offmap text.sub { font-weight: 400; font-style: italic; fill: var(--ink-2); }
+.map .scale text, .map .north text { font: 700 11px var(--body); fill: var(--ink); }
+.map .tag { font: 700 9.5px var(--body); letter-spacing: .08em; fill: var(--bloom); paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+.map .scale, .map .north { display: none; }
+
+.fab { position: absolute; right: 12px; display: grid; gap: 8px; top: 12px; }
+.fab button { width: 44px; height: 44px; padding: 0; border-radius: 12px; background: #fff; color: var(--ink);
+              box-shadow: 0 2px 8px rgba(0,0,0,.2); font-size: 22px; display: grid; place-items: center; }
+.fab button[aria-pressed="true"] { color: var(--dot); }
+.toast { position: absolute; left: 12px; right: 68px; top: 12px; background: #fff; border-radius: 12px; padding: 10px 12px;
+         box-shadow: 0 2px 10px rgba(0,0,0,.2); font-size: 14px; }
+.toast.warn { background: #FFF4D6; border-left: 5px solid #E0A100; }
+.toast.err { background: #FDE8EE; border-left: 5px solid var(--bloom); }
+.scalebar { position: absolute; left: 12px; bottom: 10px; font: 700 11px var(--body); color: var(--ink);
+            background: rgba(247,244,236,.9); padding: 4px 8px 5px; border-radius: 6px; }
+.scalebar i { display: block; height: 5px; border: 2px solid var(--ink); border-top: 0; margin-top: 2px; }
+
+.sheet { background: var(--paper-2); border-top: 1px solid var(--rule); padding: 10px 14px calc(env(safe-area-inset-bottom, 0px) + 10px);
+         display: grid; gap: 8px; max-height: 46vh; overflow: auto; }
+.progress { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-variant-numeric: tabular-nums; }
+.progress b { font: 800 20px/1 var(--display); }
+.progress span { font-size: 13px; color: var(--ink-2); }
+.bar { height: 6px; background: #E3DACA; border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--bloom); transition: width .6s; }
+.now { font: 500 17px/1.35 var(--body); }
+.now small { display: block; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--bloom); font-weight: 700; }
+.next { font-size: 14px; color: var(--ink-2); }
+details summary { cursor: pointer; font: 700 14px var(--body); color: var(--ink); padding: 4px 0; }
+ol.steps { margin: 4px 0 0; padding-left: 1.3em; display: grid; gap: 6px; font-size: 14px; }
+ol.steps li.done { color: #9A9084; }
+ol.steps li.cur { font-weight: 700; }
+ol.steps li::marker { color: var(--bloom); font-weight: 700; }
+.stops { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.stops button { background: #fff; color: var(--ink); border: 1px solid var(--rule); padding: 7px 10px; font-weight: 500; font-size: 13px; }
+.stops button b { color: var(--bloom); margin-right: 4px; }
+.fine { font-size: 11.5px; color: var(--ink-2); margin: 4px 0 0; }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Loma Staircase Loop<span class="sub">${TOTAL_MI} mi · starts &amp; ends at 1828 Loma St</span></h1>
+    <button class="ghost" id="demo" type="button" aria-pressed="false">Preview</button>
+    <button class="gps" id="gps" type="button" aria-pressed="false"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="currentColor"/></svg><span>Start GPS</span></button>
+  </header>
+
+  <div class="stage" id="stage">
+    ${MAP}
+    <div class="toast" id="toast" hidden></div>
+    <div class="fab">
+      <button id="follow" type="button" aria-pressed="false" aria-label="Center on my location" title="Center on my location">&#10753;</button>
+      <button id="zin" type="button" aria-label="Zoom in">+</button>
+      <button id="zout" type="button" aria-label="Zoom out">&minus;</button>
+      <button id="fit" type="button" aria-label="Show whole route" title="Show whole route">&#9635;</button>
+    </div>
+    <div class="scalebar" id="scalebar"><span id="scaletext">100 m</span><i id="scaleline"></i></div>
+  </div>
+
+  <section class="sheet" aria-live="polite">
+    <div class="progress"><b id="walked">0.00 mi</b><span id="remain">of ${TOTAL_MI} mi</span></div>
+    <div class="bar"><i id="barfill"></i></div>
+    <div class="now"><small id="nowlabel">First step</small><span id="nowtext"></span></div>
+    <div class="next" id="nexttext"></div>
+    <details>
+      <summary>All steps and stops</summary>
+      <ol class="steps" id="steps"></ol>
+      <div class="stops" id="stops"></div>
+      <p class="fine">Streets, paths and stairs: OpenStreetMap contributors via Overture Maps (2026-09-23). GPS is usually good to 5&ndash;15 m; under trees and on stairs it can wander.</p>
+    </details>
+  </section>
+</div>
+
+<script>
+(() => {
+  const D = ${DATA};
+  const P = D.proj;
+  const svg = document.querySelector("svg.map");
+  const stage = document.getElementById("stage");
+  const NS = "http://www.w3.org/2000/svg";
+
+  // ---------- projection (same as the map generator)
+  const toMap = (lat, lon) => [(lon - P.lon0) * P.kx * P.s, (P.lat1 - lat) * P.ky * P.s];
+
+  // ---------- view state (viewBox pan/zoom)
+  let vb = { x: 0, y: 0, w: P.w, h: P.h };
+  const clampW = w => Math.min(Math.max(w, 90), P.w * 2.2);
+  function aspect() { return stage.clientHeight / Math.max(1, stage.clientWidth); }
+  function apply() {
+    vb.h = vb.w * aspect();
+    svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+    const pxPerUnit = stage.clientWidth / vb.w;
+    const r = 7 / pxPerUnit;
+    dot.setAttribute("r", r); dotRing.setAttribute("r", r + 2.5 / pxPerUnit);
+    cone.setAttribute("transform", cone.dataset.t + ` scale(${1 / pxPerUnit})`);
+    // scale bar: pick 25/50/100/200/500 m to fit ~90 px
+    const mPerPx = 1 / (pxPerUnit * P.s);
+    const nice = [10, 25, 50, 100, 200, 500].find(m => m / mPerPx >= 60) || 500;
+    document.getElementById("scaleline").style.width = (nice / mPerPx) + "px";
+    document.getElementById("scaletext").textContent = nice + " m";
+  }
+  function fitAll() {
+    const a = aspect();
+    const w = Math.max(P.w, P.h / a);
+    vb = { x: (P.w - w) / 2, y: (P.h - w * a) / 2, w, h: w * a };
+    apply();
+  }
+  function centerOn(x, y, w) {
+    if (w) vb.w = clampW(w);
+    vb.h = vb.w * aspect();
+    vb.x = x - vb.w / 2; vb.y = y - vb.h / 2; apply();
+  }
+  function zoomAt(f, sx, sy) {
+    const r = stage.getBoundingClientRect();
+    const ux = vb.x + (sx - r.left) / r.width * vb.w, uy = vb.y + (sy - r.top) / r.height * vb.h;
+    const nw = clampW(vb.w / f);
+    vb.x = ux - (ux - vb.x) * nw / vb.w; vb.y = uy - (uy - vb.y) * nw / vb.w; vb.w = nw; apply();
+  }
+
+  // ---------- blue dot layer
+  const me = document.createElementNS(NS, "g"); me.setAttribute("visibility", "hidden");
+  const acc = document.createElementNS(NS, "circle");
+  acc.setAttribute("fill", "#1A73E8"); acc.setAttribute("fill-opacity", ".14");
+  acc.setAttribute("stroke", "#1A73E8"); acc.setAttribute("stroke-opacity", ".35"); acc.setAttribute("stroke-width", ".8");
+  const cone = document.createElementNS(NS, "path");
+  cone.setAttribute("d", "M0,0 L-11,-26 A28,28 0 0 1 11,-26 Z");
+  cone.setAttribute("fill", "#1A73E8"); cone.setAttribute("fill-opacity", ".28"); cone.setAttribute("visibility", "hidden");
+  cone.dataset.t = "";
+  const dotRing = document.createElementNS(NS, "circle"); dotRing.setAttribute("fill", "#fff");
+  const dot = document.createElementNS(NS, "circle"); dot.setAttribute("fill", "#1A73E8");
+  me.append(acc, cone, dotRing, dot); svg.append(me);
+
+  // ---------- route snapping
+  const R = D.route, C = D.cum;
+  let progress = null; // metres along route
+  function nearest(x, y, lo, hi) {
+    let best = { d: Infinity, at: 0, x: 0, y: 0 };
+    for (let i = 0; i < R.length - 1; i++) {
+      if (C[i + 1] < lo || C[i] > hi) continue;
+      const [ax, ay] = R[i], [bx, by] = R[i + 1];
+      const dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy || 1e-9;
+      let t = ((x - ax) * dx + (y - ay) * dy) / L2; t = Math.max(0, Math.min(1, t));
+      const px = ax + t * dx, py = ay + t * dy, d = Math.hypot(x - px, y - py) / P.s;
+      if (d < best.d) best = { d, at: C[i] + t * (C[i + 1] - C[i]), x: px, y: py };
+    }
+    return best;
+  }
+  function snap(x, y) {
+    // Prefer positions just behind or ahead of the last known progress, so the
+    // start/finish stretch of Loma St and parallel paths don't make it jump.
+    if (progress !== null) {
+      const local = nearest(x, y, progress - 120, progress + 450);
+      if (local.d < 45) return local;
+    }
+    return nearest(x, y, -1, Infinity);
+  }
+
+  // ---------- sheet
+  const stepsEl = document.getElementById("steps");
+  D.steps.forEach((s, i) => { const li = document.createElement("li"); li.textContent = s.text; stepsEl.append(li); });
+  const stopsEl = document.getElementById("stops");
+  D.stops.forEach(s => {
+    const b = document.createElement("button"); b.type = "button";
+    b.innerHTML = `<b>${s.n}</b>`; b.append(s.name);
+    b.addEventListener("click", () => { following = false; setFollow(); centerOn(s.x, s.y, 260); });
+    stopsEl.append(b);
+  });
+  const mi = m => (m / 1609.34).toFixed(2);
+  const fmtD = m => m < 1000 ? `${Math.round(m / 5) * 5} m (${Math.round(m * 3.281 / 10) * 10} ft)` : `${mi(m)} mi`;
+  function renderProgress(at, offBy) {
+    const walked = Math.max(0, Math.min(D.total, at));
+    document.getElementById("walked").textContent = `${mi(walked)} mi`;
+    document.getElementById("remain").textContent = `of ${mi(D.total)} mi · ${mi(D.total - walked)} to go`;
+    document.getElementById("barfill").style.width = (walked / D.total * 100).toFixed(1) + "%";
+    let cur = 0;
+    D.steps.forEach((s, i) => { if (s.at <= walked + 8) cur = i; });
+    [...stepsEl.children].forEach((li, i) => { li.className = i < cur ? "done" : i === cur ? "cur" : ""; });
+    const nxt = D.steps[cur + 1];
+    document.getElementById("nowlabel").textContent = cur === D.steps.length - 1 ? "Finished" : `Step ${cur + 1} of ${D.steps.length - 1}`;
+    document.getElementById("nowtext").textContent = D.steps[cur].text;
+    const stop = D.stops.find(s => s.at > walked + 8);
+    const parts = [];
+    if (nxt && cur < D.steps.length - 2) parts.push(`Next turn in ${fmtD(nxt.at - walked)}`);
+    if (stop) parts.push(`Stop ${stop.n}, ${stop.name}, in ${fmtD(stop.at - walked)}`);
+    document.getElementById("nexttext").textContent = parts.join(" · ");
+    if (offBy !== undefined) {
+      if (offBy > 40) toast(`You're about ${Math.round(offBy)} m from the route. The pink line is the way.`, "warn");
+      else if (toastEl.classList.contains("warn")) toast(null);
+    }
+  }
+
+  // ---------- toast
+  const toastEl = document.getElementById("toast");
+  function toast(msg, kind = "") {
+    if (!msg) { toastEl.hidden = true; toastEl.className = "toast"; return; }
+    toastEl.textContent = msg; toastEl.className = "toast " + kind; toastEl.hidden = false;
+  }
+
+  // ---------- position updates (GPS or preview)
+  let following = true, lastFix = null;
+  const followBtn = document.getElementById("follow");
+  function setFollow() { followBtn.setAttribute("aria-pressed", String(following)); }
+  function place(x, y, accM, heading) {
+    me.setAttribute("visibility", "visible");
+    for (const c of [dot, dotRing]) { c.setAttribute("cx", x); c.setAttribute("cy", y); }
+    acc.setAttribute("cx", x); acc.setAttribute("cy", y); acc.setAttribute("r", Math.max(accM, 3) * P.s);
+    if (heading != null && !isNaN(heading)) {
+      cone.dataset.t = `translate(${x},${y}) rotate(${heading})`; cone.setAttribute("visibility", "visible");
+    } else { cone.dataset.t = `translate(${x},${y})`; cone.setAttribute("visibility", "hidden"); }
+    lastFix = { x, y };
+    if (following) centerOn(x, y, Math.min(vb.w, 420)); else apply();
+  }
+  function onPosition(lat, lon, accM, heading) {
+    const [x, y] = toMap(lat, lon);
+    const inside = x > -300 && y > -300 && x < P.w + 300 && y < P.h + 300;
+    place(x, y, accM, heading);
+    if (!inside) { toast("You're outside the map area. Head to 1828 Loma St to start the loop.", "warn"); return; }
+    const s = snap(x, y);
+    if (s.d < 60 + accM) progress = progress === null ? s.at : Math.max(progress - 150, s.at);
+    renderProgress(progress ?? 0, s.d);
+  }
+
+  // GPS
+  let watchId = null, wakeLock = null;
+  const gpsBtn = document.getElementById("gps");
+  async function keepAwake() {
+    try { wakeLock = await navigator.wakeLock?.request("screen"); } catch (_) { wakeLock = null; }
+  }
+  document.addEventListener("visibilitychange", () => { if (watchId !== null && document.visibilityState === "visible") keepAwake(); });
+  function stopGps() {
+    if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+    watchId = null; gpsBtn.setAttribute("aria-pressed", "false"); gpsBtn.querySelector("span").textContent = "Start GPS";
+    try { wakeLock?.release(); } catch (_) {}
+  }
+  gpsBtn.addEventListener("click", () => {
+    if (watchId !== null) { stopGps(); return; }
+    stopDemo();
+    if (!("geolocation" in navigator) || !window.isSecureContext) {
+      toast("Location needs the page to be opened over https. Open the hosted link on your phone.", "err"); return;
+    }
+    toast("Finding you…");
+    gpsBtn.setAttribute("aria-pressed", "true"); gpsBtn.querySelector("span").textContent = "GPS on";
+    following = true; setFollow(); keepAwake();
+    watchId = navigator.geolocation.watchPosition(
+      p => { if (!toastEl.classList.contains("warn")) toast(null);
+             onPosition(p.coords.latitude, p.coords.longitude, p.coords.accuracy,
+                        (p.coords.speed ?? 0) > 0.4 ? p.coords.heading : null); },
+      e => {
+        const msg = e.code === 1
+          ? "Location is blocked. Allow location for this site in your browser settings (iPhone: Settings › Privacy › Location Services › Safari Websites), then tap Start GPS again."
+          : e.code === 3 ? "Still looking for a GPS fix. Stepping out from under trees helps." : "Couldn't get your location. Try again in a moment.";
+        toast(msg, e.code === 1 ? "err" : "warn");
+        if (e.code === 1) stopGps();
+      },
+      { enableHighAccuracy: true, maximumAge: 2000, timeout: 20000 });
+  });
+
+  // Preview: walks a pretend dot along the route so you can see how it works.
+  let demoTimer = null;
+  const demoBtn = document.getElementById("demo");
+  function stopDemo() { clearInterval(demoTimer); demoTimer = null; demoBtn.setAttribute("aria-pressed", "false"); demoBtn.textContent = "Preview"; }
+  demoBtn.addEventListener("click", () => {
+    if (demoTimer) { stopDemo(); return; }
+    stopGps(); progress = null; following = true; setFollow();
+    demoBtn.setAttribute("aria-pressed", "true"); demoBtn.textContent = "Stop preview";
+    toast("Preview: a pretend walk at 20× speed. Tap Start GPS on the day.", "");
+    let m = 0;
+    demoTimer = setInterval(() => {
+      m += 14;
+      if (m > D.total) { stopDemo(); return; }
+      let i = C.findIndex(c => c > m) - 1; if (i < 0) i = C.length - 2;
+      const t = (m - C[i]) / Math.max(1e-6, C[i + 1] - C[i]);
+      const x = R[i][0] + t * (R[i + 1][0] - R[i][0]), y = R[i][1] + t * (R[i + 1][1] - R[i][1]);
+      const hdg = Math.atan2(R[i + 1][0] - R[i][0], -(R[i + 1][1] - R[i][1])) * 180 / Math.PI;
+      const lat = P.lat1 - y / (P.ky * P.s), lon = P.lon0 + x / (P.kx * P.s);
+      onPosition(lat, lon, 6, hdg);
+    }, 500);
+  });
+
+  // ---------- gestures
+  const pts = new Map(); let pinch = null, drag = null;
+  stage.addEventListener("pointerdown", e => {
+    if (e.target.closest("button")) return;
+    stage.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pts.size === 1) drag = { x: e.clientX, y: e.clientY, vx: vb.x, vy: vb.y };
+    if (pts.size === 2) {
+      const [a, b] = [...pts.values()];
+      pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), w: vb.w, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2 };
+      drag = null;
+    }
+  });
+  stage.addEventListener("pointermove", e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const scale = vb.w / stage.clientWidth;
+    if (pinch && pts.size === 2) {
+      const [a, b] = [...pts.values()];
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      const f = (d / pinch.d) / (pinch.w / vb.w);
+      vb.x -= (mx - pinch.mx) * scale; vb.y -= (my - pinch.my) * scale;
+      pinch.mx = mx; pinch.my = my;
+      zoomAt(f, mx, my);
+      if (following) { following = false; setFollow(); }
+    } else if (drag) {
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (Math.abs(dx) + Math.abs(dy) > 4 && following) { following = false; setFollow(); }
+      vb.x = drag.vx - dx * scale; vb.y = drag.vy - dy * scale; apply();
+    }
+  });
+  const end = e => { pts.delete(e.pointerId); if (pts.size < 2) pinch = null;
+    if (pts.size === 1) { const [p] = [...pts.values()]; drag = { x: p.x, y: p.y, vx: vb.x, vy: vb.y }; } else if (!pts.size) drag = null; };
+  stage.addEventListener("pointerup", end); stage.addEventListener("pointercancel", end);
+  stage.addEventListener("wheel", e => { e.preventDefault(); zoomAt(e.deltaY < 0 ? 1.2 : 1 / 1.2, e.clientX, e.clientY); }, { passive: false });
+  document.getElementById("zin").addEventListener("click", () => { const r = stage.getBoundingClientRect(); zoomAt(1.5, r.left + r.width / 2, r.top + r.height / 2); });
+  document.getElementById("zout").addEventListener("click", () => { const r = stage.getBoundingClientRect(); zoomAt(1 / 1.5, r.left + r.width / 2, r.top + r.height / 2); });
+  document.getElementById("fit").addEventListener("click", () => { following = false; setFollow(); fitAll(); });
+  followBtn.addEventListener("click", () => {
+    following = true; setFollow();
+    if (lastFix) centerOn(lastFix.x, lastFix.y, Math.min(vb.w, 420));
+    else toast("Tap Start GPS to show your location.", "");
+  });
+  window.addEventListener("resize", apply);
+
+  fitAll(); setFollow(); renderProgress(0);
+})();
+</script>
+</body>
+</html>

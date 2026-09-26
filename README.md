@@ -3,6 +3,9 @@
 A 1.63 mi (2.6 km) walking loop from 1828 Loma St, Santa Barbara, over five public
 stairways, the Riviera Park gardens, the streets around Belmond El Encanto, and Orpet Park.
 
+- `docs/index.html`: phone walking page with a live GPS blue dot, route progress and
+  turn-by-turn steps (needs https hosting, e.g. GitHub Pages from `/docs`)
+- `docs/loma-staircase-loop.gpx` / `.kml`: the route for Google My Maps or any GPS app
 - `docs/loma-staircase-loop.html`: the brochure page (self-contained, inline SVG map)
 - `docs/loma-staircase-loop.png`: the same page as an image
 - `docs/lower-riviera-staircase-walk.jpg` (1800×1900) and `-print.jpg` (3600×3800): the illustrated poster
@@ -28,6 +31,7 @@ AWS_CA_BUNDLE=... python3 scripts/fetch_overture.py data/overture   # ~16 MB, no
 python3 scripts/route.py data/overture data/route.geojson
 python3 scripts/make_map.py data/overture data/route.geojson docs/loma-staircase-loop.html
 node scripts/screenshot.mjs docs/loma-staircase-loop.html docs/loma-staircase-loop.png 1400
+python3 scripts/make_walk.py data/overture data/route.geojson docs
 python3 scripts/make_poster.py data/overture data/route.geojson docs/lower-riviera-staircase-walk.html
 node scripts/screenshot.mjs docs/lower-riviera-staircase-walk.html poster.png 1800
 ```
