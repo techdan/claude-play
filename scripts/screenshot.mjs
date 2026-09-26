@@ -1,0 +1,10 @@
+import { chromium } from 'playwright';
+const [,, src, out, width] = process.argv;
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: +width, height: 900 }, deviceScaleFactor: 2 });
+const fs = await import('fs');
+const body = fs.readFileSync(src, 'utf8');
+await p.setContent(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head><body>${body}</body></html>`, { waitUntil: 'networkidle' });
+await p.evaluate(() => document.fonts.ready);
+await p.screenshot({ path: out, fullPage: true });
+await b.close();
