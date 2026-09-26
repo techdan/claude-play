@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>claude-play</title>
+<style>
+  :root { --bg: #F4F1EC; --card: #FFFFFF; --ink: #1F2A36; --ink-2: #5A6573; --rule: #DDD6CB; --accent: #2B6CB0; color-scheme: light; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #151A20; --card: #1E252D; --ink: #E8ECF1; --ink-2: #A3AEBB; --rule: #2E3743; --accent: #7FB0FF; color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; padding: 40px 16px 64px; }
+  main { max-width: 880px; margin: 0 auto; display: grid; gap: 28px; }
+  h1 { margin: 0; font: 700 clamp(28px, 5vw, 40px)/1.1 ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: -.02em; }
+  header p { margin: 6px 0 0; color: var(--ink-2); max-width: 60ch; }
+  .apps { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); padding: 0; margin: 0; list-style: none; }
+  .app { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; display: grid; }
+  .app a.cover { display: block; aspect-ratio: 18 / 19; max-height: 280px; overflow: hidden; }
+  .app img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .app .body { padding: 14px 16px 16px; display: grid; gap: 6px; }
+  .app h2 { margin: 0; font-size: 18px; }
+  .app h2 a { color: inherit; text-decoration: none; }
+  .app p { margin: 0; color: var(--ink-2); font-size: 14px; }
+  .app .more { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; }
+  .app .more a, footer a { color: var(--accent); }
+  .tag { font: 600 11px/1 ui-monospace, Menlo, monospace; color: var(--ink-2); letter-spacing: .04em; }
+  a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  footer { color: var(--ink-2); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>claude-play</h1>
+    <p>Small apps and one-off work made with Claude Code. Each one lives in its own folder.</p>
+  </header>
+  <ul class="apps">
+    <li class="app">
+      <a class="cover" href="sb-riviera-walk/"><img src="sb-riviera-walk/lower-riviera-staircase-walk.jpg" alt="Illustrated map of the Lower Riviera Staircase Walk" loading="lazy"></a>
+      <div class="body">
+        <span class="tag">sb-riviera-walk/</span>
+        <h2><a href="sb-riviera-walk/">Riviera Staircase Walk</a></h2>
+        <p>A 1.63-mile loop from 1828 Loma St over five stairways in Santa Barbara, with a live GPS blue dot on an accurate illustrated map.</p>
+        <div class="more">
+          <a href="sb-riviera-walk/">GPS walk</a>
+          <a href="sb-riviera-walk/loma-staircase-loop.html">Brochure</a>
+          <a href="sb-riviera-walk/lower-riviera-staircase-walk-print.jpg">Poster</a>
+          <a href="sb-riviera-walk/loma-staircase-loop.gpx">GPX</a>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <footer><a href="https://github.com/techdan/claude-play">Source on GitHub</a></footer>
+</main>
+</body>
+</html>
