@@ -26,6 +26,11 @@
   .app .more a, footer a { color: var(--accent); }
   .tag { font: 600 11px/1 ui-monospace, Menlo, monospace; color: var(--ink-2); letter-spacing: .04em; }
   a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .empty { margin: 0; color: var(--ink-2); }
+  .arch { margin: 0 0 8px; font: 700 13px/1 ui-monospace, Menlo, monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+  .archive { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; }
+  .archive a { color: var(--accent); font-family: ui-monospace, Menlo, monospace; }
+  .archive span { color: var(--ink-2); }
   footer { color: var(--ink-2); font-size: 13px; }
 </style>
 </head>
@@ -35,22 +40,13 @@
     <h1>claude-play</h1>
     <p>Small apps and one-off work made with Claude Code. Each one lives in its own folder.</p>
   </header>
-  <ul class="apps">
-    <li class="app">
-      <a class="cover" href="sb-riviera-walk/"><img src="sb-riviera-walk/lower-riviera-staircase-walk.jpg" alt="Illustrated map of the Lower Riviera Staircase Walk" loading="lazy"></a>
-      <div class="body">
-        <span class="tag">sb-riviera-walk/</span>
-        <h2><a href="sb-riviera-walk/">Riviera Staircase Walk</a></h2>
-        <p>A 1.63-mile loop from 1828 Loma St over five stairways in Santa Barbara, with a live GPS blue dot on an accurate illustrated map.</p>
-        <div class="more">
-          <a href="sb-riviera-walk/">GPS walk</a>
-          <a href="sb-riviera-walk/loma-staircase-loop.html">Brochure</a>
-          <a href="sb-riviera-walk/lower-riviera-staircase-walk-print.jpg">Poster</a>
-          <a href="sb-riviera-walk/loma-staircase-loop.gpx">GPX</a>
-        </div>
-      </div>
-    </li>
-  </ul>
+  <p class="empty">No apps right now. New ones will show up here.</p>
+  <section>
+    <h2 class="arch">Archive</h2>
+    <ul class="archive">
+      <li><a href="https://github.com/techdan/claude-play/tree/archive/sb-riviera-walk/sb-riviera-walk">sb-riviera-walk</a> <span>Santa Barbara Lower Riviera staircase walk: GPS page, illustrated poster, GPX/KML (Sept 2026)</span></li>
+    </ul>
+  </section>
   <footer><a href="https://github.com/techdan/claude-play">Source on GitHub</a></footer>
 </main>
 </body>

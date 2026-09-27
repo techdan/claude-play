@@ -13,4 +13,8 @@ A workspace for small apps and one-off pieces of work done from Claude Code on t
   link) and to the table in the root `README.md`.
 - `.nojekyll` stays at the root so GitHub serves files as-is.
 - Large raw downloads and caches are git-ignored inside the task folder (see
-  `sb-riviera-walk/.gitignore`); commit only what is needed to rebuild or view.
+  task's `.gitignore`); commit only what is needed to rebuild or view.
+- **Archiving a finished one-off:** push the current `main` commit to a branch named
+  `archive/<folder>` (branches, not tags: tag pushes are refused from the web sandbox),
+  then delete the folder from `main`, remove its card from `index.html`, and move its
+  README row to the Archive table with a link to the folder on that branch.
